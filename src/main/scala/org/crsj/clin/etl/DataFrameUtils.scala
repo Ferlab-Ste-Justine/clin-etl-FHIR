@@ -18,6 +18,7 @@ object DataFrameUtils {
 
 
   val identifier: UserDefinedFunction = udf((data: Seq[Row]) => {
+    if (data == null) None
     val d = data.collect {
       case r@Row(Row(Seq(coding: Row, _*), _*), _*) => coding.getAs[String]("code") -> r.getAs[String]("value")
     }.toMap
