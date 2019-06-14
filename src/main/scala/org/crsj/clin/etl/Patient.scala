@@ -10,10 +10,13 @@ object Patient {
 
   private def patientExtension[T: TypeTag](url: String, columnName: String): UserDefinedFunction = {
     udf((data: Seq[Row]) => {
-      val d: Option[T] = data.collectFirst {
-        case r@Row(u: String, _*) if u == url => r.getAs[T](columnName)
+      if (data == null) None
+      else {
+        val d: Option[T] = data.collectFirst {
+          case r@Row(u: String, _*) if u == url => r.getAs[T](columnName)
+        }
+        d
       }
-      d
     })
   }
 
