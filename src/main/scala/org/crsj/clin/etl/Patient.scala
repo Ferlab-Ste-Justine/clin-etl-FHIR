@@ -33,9 +33,9 @@ object Patient {
 
             val patientID = rowSeq(1).asInstanceOf[Seq[String]].head
 
-            val valueCode = rowSeq.head.asInstanceOf[mutable.WrappedArray[Any]](1)
+            val valueCode = rowSeq.head.asInstanceOf[mutable.WrappedArray[String]](1)
 
-            Array[Any](patientID, valueCode)
+            Array[String](patientID, valueCode)
           })
         }
       }
