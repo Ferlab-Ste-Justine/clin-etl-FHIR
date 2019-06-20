@@ -25,7 +25,9 @@ object Patient {
       if(data == null) None
       else {
         Some{
-          data.map( row => Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode")))
+          data.map( (row: Row) => {
+            row.toSeq.map( ele => Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode")))
+          })
         }
       }
     })
