@@ -25,7 +25,12 @@ object Patient {
       if(data == null) None
       else {
         Some{
-          data.map( row => Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode")))
+          print("DATA: ")
+          println(data)
+          data.map( row => {
+            print("ROW: "); println(row)
+            Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode"))
+          })
         }
       }
     })
