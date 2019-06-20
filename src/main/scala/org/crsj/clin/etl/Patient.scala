@@ -27,12 +27,19 @@ object Patient {
       else {
         Some{
           data.map( row => {
-            try {
-              Array[String](row(1).asInstanceOf[Row](0).asInstanceOf[String], row(0).asInstanceOf[mutable.WrappedArray[String]](1))
+            //TODO ¯\_(ツ)_/¯ row.toSeq fails, row(1) fails, row.getAs fails, but it prints alright
 
-            } catch {
-              case _ => Array[String]()
-            }
+            val myDirtyHack = row.toString()
+              .replaceAll("WrappedArray", "")
+              .replaceAll("(", "")
+              .replaceAll(")", "")
+              .replaceAll("[", "")
+              .replaceAll("]", "")
+              .split(",")
+
+            Array(myDirtyHack(1), myDirtyHack(2))
+
+            //TODO End. Please don't judge us too hard for this when you refactor it :slightly_smiling_face:
           })
         }
       }
