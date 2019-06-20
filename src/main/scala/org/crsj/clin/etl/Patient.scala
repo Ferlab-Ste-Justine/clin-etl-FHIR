@@ -58,7 +58,6 @@ object Patient {
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
       linkGetter(expr("link")) as "link2",
-//      DataFrameUtils.link($"link") as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",

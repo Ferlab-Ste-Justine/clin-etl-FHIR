@@ -27,17 +27,6 @@ object DataFrameUtils {
     }
   })
 
-  val link: UserDefinedFunction = udf((data: Seq[Row]) => {
-    if (data == null) None
-    else {
-      val d = data.collect {
-        case r@Row(Row(Seq(coding: Row, _*), _*), _*) => coding.getAs[String]("other") -> r.getAs[String]("valueCode")
-      }.toMap
-      if (d.nonEmpty) Some(d) else None
-    }
-  })
-
-
 
   def joinAggregateList(df1: DataFrame, df2: DataFrame, condition: Column, columnName: String): DataFrame = {
     df1.joinWith(df2, condition, "left")
