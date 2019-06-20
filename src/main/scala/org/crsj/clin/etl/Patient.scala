@@ -21,6 +21,8 @@ object Patient {
       }
     })
   }
+  case class Family(relationship: String, id: String)
+
   private def linkGetter: UserDefinedFunction = {
     udf((data: Seq[Row]) => {
       if(data == null) None
@@ -37,7 +39,7 @@ object Patient {
               .replaceAll("\\]", "")
               .split(",")
 
-            Array(myDirtyHack(1), myDirtyHack(2))
+            Family(myDirtyHack(1), myDirtyHack(2))
 
             //TODO End. Please don't judge us too hard for this when you refactor it :slightly_smiling_face:
           })
