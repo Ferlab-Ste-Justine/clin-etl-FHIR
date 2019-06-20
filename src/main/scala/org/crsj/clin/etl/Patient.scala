@@ -32,7 +32,7 @@ object Patient {
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
       $"link.other.id" as "link2",
-      $"link.extension.valueCode" as "valueCode",
+      $"link.extension[0].valueCode" as "valueCode",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
