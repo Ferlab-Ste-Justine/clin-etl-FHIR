@@ -25,7 +25,7 @@ object Patient {
   private val linkToPatient = udf((data: Seq[Row]) => {
     if (data == null) None
     else Some {
-      data.map { r => Relationship(r.getAs("other.id"), r.getAs("extension.valueCode"))
+      data.map { r => Relationship(r.getAs("id"), r.getAs("valueCode"))
       }
     }
   })
