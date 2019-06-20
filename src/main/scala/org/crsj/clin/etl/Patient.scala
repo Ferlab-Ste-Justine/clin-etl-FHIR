@@ -20,10 +20,20 @@ object Patient {
     })
   }
 
+  private def linkGetter: UserDefinedFunction = {
+    udf((data: Seq[Row]) => {
+      if(data == null) None
+      else {
+        Some{
+          data.map( row => Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode")))
+        }
+      }
+    })
+  }
+
   private val family: UserDefinedFunction = patientExtension[String]("familyId", "valueId")
   private val ethnicity: UserDefinedFunction = patientExtension[String]("ethnicity", "valueCode")
   private val familyComposition: UserDefinedFunction = patientExtension[String]("familyComposition", "valueCode")
-  private val familyRelation: UserDefinedFunction = patientExtension[String]("valueCode", "valueCode")
   private val isProband: UserDefinedFunction = patientExtension[Boolean]("isProband", "valueBoolean")
 
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
@@ -32,9 +42,7 @@ object Patient {
       $"id", $"active", $"gender", $"birthDate",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-      $"link.other.id" as "link2",
-      $"link.extension" as "link2",
-//      familyRelation(expr("link[0]")) as "relation",
+      linkGetter(expr("link")) as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
