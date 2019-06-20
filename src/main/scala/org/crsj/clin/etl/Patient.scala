@@ -23,6 +23,7 @@ object Patient {
   private val family: UserDefinedFunction = patientExtension[String]("familyId", "valueId")
   private val ethnicity: UserDefinedFunction = patientExtension[String]("ethnicity", "valueCode")
   private val familyComposition: UserDefinedFunction = patientExtension[String]("familyComposition", "valueCode")
+  private val familyRelation: UserDefinedFunction = patientExtension[String]("valueCode", "valueCode")
   private val isProband: UserDefinedFunction = patientExtension[Boolean]("isProband", "valueBoolean")
 
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
@@ -32,7 +33,7 @@ object Patient {
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
       $"link.other.id" as "link2",
-      $"link.extension[0].valueCode" as "valueCode",
+      familyRelation(expr("link.extension[0]")) as "relation",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
