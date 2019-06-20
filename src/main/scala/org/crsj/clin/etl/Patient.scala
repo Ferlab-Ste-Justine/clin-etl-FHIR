@@ -33,7 +33,7 @@ object Patient {
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
       $"link.other.id" as "link2",
-      $"link.extension" as "relation",
+      $"link.extension" as "link2",
 //      familyRelation(expr("link[0]")) as "relation",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
