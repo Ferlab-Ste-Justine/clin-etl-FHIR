@@ -6,6 +6,8 @@ import org.apache.spark.sql.functions.{expr, udf}
 
 object Patient {
 
+  case class Relationship (id: String, relation: String)
+
   import scala.reflect.runtime.universe.TypeTag
 
   private def patientExtension[T: TypeTag](url: String, columnName: String): UserDefinedFunction = {
@@ -19,6 +21,14 @@ object Patient {
       }
     })
   }
+
+  private val linkToPatient = udf((data: Seq[Row]) => {
+    if (data == null) None
+    else Some {
+      data.map { r => Relationship(r.getAs("other.id"), r.getAs("extension.valueCode"))
+      }
+    }
+  })
 
   private def linkGetter: UserDefinedFunction = {
     udf((data: Seq[Row]) => {
@@ -47,7 +57,8 @@ object Patient {
       $"id", $"active", $"gender", $"birthDate",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-      linkGetter(expr("link")) as "link2",
+      //linkGetter(expr("link")) as "link2",
+      linkToPatient($"link") as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
