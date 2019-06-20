@@ -27,7 +27,12 @@ object Patient {
       else {
         Some{
           data.map( row => {
-            Array[String](row(1).asInstanceOf[Row](0).asInstanceOf[String], row(0).asInstanceOf[mutable.WrappedArray[String]](1))
+            try {
+              Array[String](row(1).asInstanceOf[Row](0).asInstanceOf[String], row(0).asInstanceOf[mutable.WrappedArray[String]](1))
+
+            } catch {
+              case _ => Array[String]()
+            }
           })
         }
       }
@@ -45,8 +50,8 @@ object Patient {
       $"id", $"active", $"gender", $"birthDate", $"name",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-//      linkGetter(expr("link")) as "link2",
-      DataFrameUtils.link($"link") as "link2",
+      linkGetter(expr("link")) as "link2",
+//      DataFrameUtils.link($"link") as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
