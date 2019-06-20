@@ -33,8 +33,8 @@ object Patient {
               .replaceAll("WrappedArray", "")
               .replaceAll("(", "")
               .replaceAll(")", "")
-              .replaceAll("[", "")
-              .replaceAll("]", "")
+              .replaceAll("\\[", "")
+              .replaceAll("\\]", "")
               .split(",")
 
             Array(myDirtyHack(1), myDirtyHack(2))
