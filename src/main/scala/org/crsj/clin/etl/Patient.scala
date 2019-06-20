@@ -27,7 +27,7 @@ object Patient {
       else {
         Some{
           data.map( row => {
-            Array[String](row(1).asInstanceOf[Traversable[String]](0), row(0).asInstanceOf[mutable.WrappedArray[String]](1))
+            Array[String](row(1).asInstanceOf[Iterable[String]](0), row(0).asInstanceOf[mutable.WrappedArray[String]](1))
           })
         }
       }
