@@ -31,7 +31,7 @@ object DataFrameUtils {
     if (data == null) None
     else {
       val d = data.collect {
-        case r@Row(Row(Seq(coding: Row, _*), _*), _*) => coding.getAs[String]("id") -> r.getAs[String]("valueCode")
+        case r@Row(Row(Seq(coding: Row, _*), _*), _*) => coding.getAs[String]("other") -> r.getAs[String]("valueCode")
       }.toMap
       if (d.nonEmpty) Some(d) else None
     }
