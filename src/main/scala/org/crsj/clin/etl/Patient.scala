@@ -25,9 +25,7 @@ object Patient {
       if(data == null) None
       else {
         Some{
-          data.map( (row: Row) => {
-            row.toSeq.map( ele => Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode")))
-          })
+          data.map( row => Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode")))
         }
       }
     })
@@ -44,7 +42,7 @@ object Patient {
       $"id", $"active", $"gender", $"birthDate",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-      linkGetter($"link") as "link2",
+      linkGetter(expr("link")) as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
