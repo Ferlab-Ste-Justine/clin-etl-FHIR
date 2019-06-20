@@ -28,14 +28,7 @@ object Patient {
       else {
         Some{
           data.map( row => {
-
-            val rowSeq = row.toSeq
-
-            val patientID = rowSeq(1).asInstanceOf[Seq[String]].head
-
-            val valueCode = rowSeq.head.asInstanceOf[mutable.WrappedArray[String]](1)
-
-            Array[String](patientID, valueCode)
+            Array[String](row.getAs[String]("other.id"), row.getAs[Array[String]]("extension")(1))
           })
         }
       }
@@ -53,8 +46,8 @@ object Patient {
       $"id", $"active", $"gender", $"birthDate", $"name",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-//      linkGetter(expr("link")) as "link2",
-      DataFrameUtils.link($"link") as "link2",
+      linkGetter(expr("link")) as "link2",
+//      DataFrameUtils.link($"link") as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
