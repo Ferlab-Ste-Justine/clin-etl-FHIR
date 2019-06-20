@@ -4,9 +4,9 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{expr, udf}
 
-object Patient {
+import scala.collection.mutable
 
-  case class Relationship (id: String, relation: String)
+object Patient {
 
   import scala.reflect.runtime.universe.TypeTag
 
@@ -22,24 +22,20 @@ object Patient {
     })
   }
 
-  private val linkToPatient = udf((data: Seq[Row]) => {
-    if (data == null) None
-    else Some {
-      data.map { r => Relationship(r.getAs("id"), r.getAs("valueCode"))
-      }
-    }
-  })
-
   private def linkGetter: UserDefinedFunction = {
     udf((data: Seq[Row]) => {
       if(data == null) None
       else {
         Some{
-          print("DATA: ")
-          println(data)
           data.map( row => {
-            print("ROW: "); println(row)
-            Array[String](row.getAs[String]("other.id"), row.getAs[String]("extension.valueCode"))
+
+            val rowSeq = row.toSeq
+
+            val patientID = rowSeq(1).asInstanceOf[Seq[String]].head
+
+            val valueCode = rowSeq.head.asInstanceOf[mutable.WrappedArray](1)
+
+            Array(patientID, valueCode)
           })
         }
       }
@@ -54,11 +50,10 @@ object Patient {
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
     val patients = DataFrameUtils.load(s"$base/pt.ndjson",
-      $"id", $"active", $"gender", $"birthDate",
+      $"id", $"active", $"gender", $"birthDate", $"name",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-      //linkGetter(expr("link")) as "link2",
-      linkToPatient($"link") as "link2",
+      linkGetter(expr("link")) as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
