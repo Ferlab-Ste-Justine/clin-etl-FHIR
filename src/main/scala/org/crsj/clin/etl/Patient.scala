@@ -21,14 +21,13 @@ object Patient {
       }
     })
   }
-
   private def linkGetter: UserDefinedFunction = {
     udf((data: Seq[Row]) => {
       if(data == null) None
       else {
         Some{
           data.map( row => {
-            Array[String](row.getAs[String]("other.id"), row.getAs[Array[String]]("extension")(1))
+            Array[String](row(1).asInstanceOf[Traversable[String]](0), row(0).asInstanceOf[mutable.WrappedArray[String]](1))
           })
         }
       }
