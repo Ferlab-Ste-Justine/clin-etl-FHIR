@@ -31,8 +31,8 @@ object Patient {
 
             val myDirtyHack = row.toString()
               .replaceAll("WrappedArray", "")
-              .replaceAll("(", "")
-              .replaceAll(")", "")
+              .replaceAll("\\(", "")
+              .replaceAll("\\)", "")
               .replaceAll("\\[", "")
               .replaceAll("\\]", "")
               .split(",")
