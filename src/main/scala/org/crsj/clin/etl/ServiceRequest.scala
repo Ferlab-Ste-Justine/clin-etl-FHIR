@@ -23,7 +23,7 @@ object ServiceRequest {
       .join(clinicalImpressions.select($"status" as "ci_status", $"id" as "ci_id"), $"ci_ref" === $"ci_id")
 
     val serviceRequestWithClinicalImpressionAndRequester = serviceRequestWithClinicalImpression.select($"id", $"status", $"intent", $"authoredOn", $"code", $"subject",
-      $"specimen", $"ci_ref", $"requester_id",$"ci_status").join(practitionerWithRoles.select($"practionerRole.id" as "role_id", $"name"), $"requester_id" === $"role_id")
+      $"specimen", $"ci_ref", $"requester_id",$"ci_status").join(practitionerWithRoles.select($"role_id", $"name"), $"requester_id" === $"role_id")
 
 
     serviceRequestWithClinicalImpressionAndRequester
