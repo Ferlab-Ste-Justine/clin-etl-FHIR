@@ -43,6 +43,6 @@ object ServiceRequest {
     DataFrameUtils.load(s"$base/sr.ndjson",
       $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen",
       //refGetter(expr("extension.valueReference.reference")) as "ci_ref")
-    expr("extension[0].valueReference.reference").substr("ClinicalImpression/".length - 1,7) as "ci_ref")
+    expr("extension[0].valueReference.reference") as "ci_ref")
   }
 }
