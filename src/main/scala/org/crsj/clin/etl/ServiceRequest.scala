@@ -19,7 +19,7 @@ object ServiceRequest {
     val sr = DataFrameUtils.load(s"$base/sr.ndjson",
       $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen",
       //refGetter(expr("extension.valueReference.reference")) as "ci_ref")
-    expr("extension[0].valueReference.reference").substr(20,7) as "ci_ref")
+    expr("extension[0].valueReference.reference").substr(20,7) as "ci_ref", $"requester.id" as "requester_id")
 
     val clinicalImpressions = DataFrameUtils.load(s"$base/ci.ndjson", $"id" as "ci_id", $"subject" as "ci_subj", $"status" as "ci_status", $"effective" as "ci_effective")
 
