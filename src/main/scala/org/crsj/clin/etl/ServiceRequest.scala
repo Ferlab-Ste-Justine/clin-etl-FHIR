@@ -29,7 +29,7 @@ object ServiceRequest {
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
     DataFrameUtils.load(s"$base/sr.ndjson",
-      $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"speciment",
+      $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen",
       $"extension.valueReference.reference" ("") as "ci_ref")
   }
 }
