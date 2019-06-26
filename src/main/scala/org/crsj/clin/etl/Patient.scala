@@ -4,8 +4,6 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.{expr, udf}
 
-import scala.collection.mutable
-
 object Patient {
 
   import scala.reflect.runtime.universe.TypeTag
