@@ -24,12 +24,24 @@ object ServiceRequest {
   }
 
 
-  private val clinicalImpression: UserDefinedFunction = serviceRequestExtension[String]("familyId", "valueId")
+  private def refGetter: UserDefinedFunction = {
+    udf((data) => {
+      if(data == null) None
+      else {
+          println(data)
+          data
+        }
+    })
+
+  }
+
+
+  private val clinicalImpressionRef: UserDefinedFunction = serviceRequestExtension[String]("familyId", "valueId")
 
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
     DataFrameUtils.load(s"$base/sr.ndjson",
       $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen",
-      $"extension.valueReference.reference".substr(18,7) as "ci_ref")
+      refGetter(expr("extension.valueReference.reference")) as "ci_ref")
   }
 }
