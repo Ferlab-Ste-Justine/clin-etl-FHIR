@@ -25,7 +25,7 @@ object ServiceRequest {
 
 
   private def refGetter: UserDefinedFunction = {
-    udf((data) => {
+    udf((data: Seq[Row]) => {
       if(data == null) None
       else {
           println(data)
