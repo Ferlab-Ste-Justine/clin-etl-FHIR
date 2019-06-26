@@ -24,7 +24,7 @@ object ServiceRequest {
     val clinicalImpressions = DataFrameUtils.load(s"$base/ci.ndjson", $"id" as "ci_id", $"subject" as "ci_subj", $"status" as "ci_status", $"effective" as "ci_effective")
 
     val serviceRequestWithClinicalImpression = sr.select($"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen", $"ci_ref")
-      .join(clinicalImpressions.select($"ci_status" as "status"), $"ci_ref" === $"ci_id")
+      .join(clinicalImpressions.select($"ci_status" as "status", $"ci_id"), $"ci_ref" === $"ci_id")
 
   serviceRequestWithClinicalImpression
   }
