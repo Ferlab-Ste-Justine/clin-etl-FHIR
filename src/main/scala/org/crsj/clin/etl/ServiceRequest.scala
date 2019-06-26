@@ -11,38 +11,21 @@ object ServiceRequest {
 
   import scala.reflect.runtime.universe.TypeTag
 
-  private def serviceRequestExtension[T: TypeTag](url: String, columnName: String): UserDefinedFunction = {
-    udf((data: Seq[Row]) => {
-      if (data == null) None
-      else {
-        val d: Option[T] = data.collectFirst {
-          case r@Row(u: String, _*) if u == url => r.getAs[T](columnName)
-        }
-        d
-      }
-    })
-  }
 
 
-  private def refGetter: UserDefinedFunction = {
-    udf((data: Seq[Row]) => {
-      if(data == null) None
-      else {
-          println(data)
-          ""
-        }
-    })
-
-  }
-
-
-  private val clinicalImpressionRef: UserDefinedFunction = serviceRequestExtension[String]("familyId", "valueId")
 
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
-    DataFrameUtils.load(s"$base/sr.ndjson",
+    val sr = DataFrameUtils.load(s"$base/sr.ndjson",
       $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen",
       //refGetter(expr("extension.valueReference.reference")) as "ci_ref")
     expr("extension[0].valueReference.reference").substr(20,7) as "ci_ref")
+
+    val clinicalImpressions = DataFrameUtils.load(s"$base/ci.ndjson", $"id" as "ci_id", $"subject", $"status", $"effective")
+
+    val serviceRequestWithClinicalImpression = sr.select($"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen", $"ci_ref")
+      .join(clinicalImpressions.select("*"), $"ci_ref" === $"ci_id")
+
+  serviceRequestWithClinicalImpression
   }
 }
