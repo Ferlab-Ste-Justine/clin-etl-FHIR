@@ -29,7 +29,7 @@ object ServiceRequest {
       if(data == null) None
       else {
           println(data)
-          data
+          ""
         }
     })
 
@@ -43,5 +43,6 @@ object ServiceRequest {
     DataFrameUtils.load(s"$base/sr.ndjson",
       $"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen",
       refGetter(expr("extension.valueReference.reference")) as "ci_ref")
+    //$"extension.valueReference.reference"
   }
 }
