@@ -16,7 +16,7 @@ object ETL {
     val clinicalImpressions = ClinicalImpression.load(base)
     val practitionerWithRoles = Practitioners.load(base)
     val organizations = Organization.load(base)
-    val serviceRequest = ServiceRequest.load(base)
+    val serviceRequest = ServiceRequest.load(base, practitionerWithRoles, clinicalImpressions)
     val studyWithPatients = Study.load(base)
     val familyMemberHistory = FamilyMemberHistory.load(base)
 

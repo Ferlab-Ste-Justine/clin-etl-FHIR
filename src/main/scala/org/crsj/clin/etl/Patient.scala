@@ -19,6 +19,32 @@ object Patient {
       }
     })
   }
+  case class Family(relationship: String, id: String)
+
+  private def linkGetter: UserDefinedFunction = {
+    udf((data: Seq[Row]) => {
+      if(data == null) None
+      else {
+        Some{
+          data.map( row => {
+            //TODO ¯\_(ツ)_/¯ row.toSeq fails, row(1) fails, row.getAs fails, but it prints alright
+
+            val myDirtyHack = row.toString()
+              .replaceAll("WrappedArray", "")
+              .replaceAll("\\(", "")
+              .replaceAll("\\)", "")
+              .replaceAll("\\[", "")
+              .replaceAll("\\]", "")
+              .split(",")
+
+            Family(myDirtyHack(1), myDirtyHack(2))
+
+            //TODO End. Please don't judge us too hard for this when you refactor it :slightly_smiling_face:
+          })
+        }
+      }
+    })
+  }
 
   private val family: UserDefinedFunction = patientExtension[String]("familyId", "valueId")
   private val ethnicity: UserDefinedFunction = patientExtension[String]("ethnicity", "valueCode")
@@ -28,10 +54,10 @@ object Patient {
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
     val patients = DataFrameUtils.load(s"$base/pt.ndjson",
-      $"id", $"active", $"gender", $"birthDate",
+      $"id", $"active", $"gender", $"birthDate", $"name",
       $"generalPractitioner", $"managingOrganization",
       DataFrameUtils.identifier($"identifier") as "identifier2",
-      $"link.other.id" as "link2",
+      linkGetter(expr("link")) as "link2",
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
