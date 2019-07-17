@@ -1,9 +1,10 @@
 package org.crsj.clin.etl
 
+import org.apache.spark.sql
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object Practitioners {
-  def load(base: String)(implicit spark: SparkSession): DataFrame = {
+  def load(base: String)(implicit spark: SparkSession, organization: sql.DataFrame): DataFrame = {
     import spark.implicits._
 
     val practitioners = DataFrameUtils.load(s"$base/pr.ndjson", $"id", $"name", DataFrameUtils.identifier($"identifier") as "identifier2").withColumnRenamed("identifier2", "identifier")
@@ -13,7 +14,14 @@ object Practitioners {
       .withColumnRenamed("_1", "practionerRole")
       .withColumnRenamed("_2", "practitioner")
       .select($"practionerRole.id" as "role_id", $"practionerRole.org_id" as "role_org_id", $"practitioner.*")
-    practitionerWithRoles
+
+    val practitionerWithRolesAndOrg = practitionerWithRoles.joinWith(organization, practitionerRoles("role_org_id") === organization("id"))
+        .withColumnRenamed( "_1", "practitionerWithRoles")
+        .withColumnRenamed("_2", "organization")
+        .select($"practitionerWithRoles.*", $"organization.name")
+
+
+    practitionerWithRolesAndOrg
 
   }
 }
