@@ -50,6 +50,7 @@ object Patient {
   private val ethnicity: UserDefinedFunction = patientExtension[String]("ethnicity", "valueCode")
   private val familyComposition: UserDefinedFunction = patientExtension[String]("familyComposition", "valueCode")
   private val isProband: UserDefinedFunction = patientExtension[Boolean]("isProband", "valueBoolean")
+  private val status: UserDefinedFunction = patientExtension[Boolean]("status", "valueBoolean")
 
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
@@ -61,7 +62,8 @@ object Patient {
       family(expr("extension[0].extension")) as "familyId",
       ethnicity(expr("extension[0].extension")) as "ethnicity",
       familyComposition(expr("extension[0].extension")) as "familyComposition",
-      isProband(expr("extension[0].extension")) as "isProband"
+      isProband(expr("extension[0].extension")) as "isProband",
+      status(expr("extension[0].extension")) as "status"
     )
       .withColumnRenamed("identifier2", "identifier")
       .withColumnRenamed("link2", "link")
