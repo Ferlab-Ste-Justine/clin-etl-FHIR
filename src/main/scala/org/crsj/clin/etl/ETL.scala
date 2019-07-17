@@ -10,12 +10,12 @@ object ETL {
 
   def run(base: String)(implicit spark: SparkSession): Unit = {
     import spark.implicits._
+    val organizations = Organization.load(base)
     val patients = Patient.load(base)
     val observations = Observation.load(base)
     val specimens = Specimen.load(base)
     val clinicalImpressions = ClinicalImpression.load(base)
     val practitionerWithRoles = Practitioners.load(base)
-    val organizations = Organization.load(base)
     val serviceRequest = ServiceRequest.load(base, practitionerWithRoles, clinicalImpressions)
     val studyWithPatients = Study.load(base)
     val familyMemberHistory = FamilyMemberHistory.load(base)
