@@ -4,7 +4,7 @@ import org.apache.spark.sql
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object Practitioners {
-  def load(base: String)(implicit spark: SparkSession, organization: sql.DataFrame): DataFrame = {
+  def load(base: String, organization: sql.DataFrame)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
 
     val practitioners = DataFrameUtils.load(s"$base/pr.ndjson", $"id", $"name", DataFrameUtils.identifier($"identifier") as "identifier2").withColumnRenamed("identifier2", "identifier")
