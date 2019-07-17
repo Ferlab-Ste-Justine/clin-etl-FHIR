@@ -6,7 +6,7 @@ object Practitioners {
   def load(base: String)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
 
-    val practitioners = DataFrameUtils.load(s"$base/pr.ndjson", $"id", $"name", $"prefix", $"suffix", DataFrameUtils.identifier($"identifier") as "identifier2").withColumnRenamed("identifier2", "identifier")
+    val practitioners = DataFrameUtils.load(s"$base/pr.ndjson", $"id", $"name", DataFrameUtils.identifier($"identifier") as "identifier2").withColumnRenamed("identifier2", "identifier")
     val practitionerRoles = DataFrameUtils.load(s"$base/prr.ndjson", $"id", $"practitioner")
 
     val practitionerWithRoles = practitionerRoles.joinWith(practitioners, practitioners("id") === practitionerRoles("practitioner.id"))
