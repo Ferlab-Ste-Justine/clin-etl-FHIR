@@ -7,12 +7,12 @@ object Practitioners {
     import spark.implicits._
 
     val practitioners = DataFrameUtils.load(s"$base/pr.ndjson", $"id", $"name", DataFrameUtils.identifier($"identifier") as "identifier2").withColumnRenamed("identifier2", "identifier")
-    val practitionerRoles = DataFrameUtils.load(s"$base/prr.ndjson", $"id", $"practitioner", $"organisation.id")
+    val practitionerRoles = DataFrameUtils.load(s"$base/prr.ndjson", $"id", $"practitioner", $"organization.id")
 
     val practitionerWithRoles = practitionerRoles.joinWith(practitioners, practitioners("id") === practitionerRoles("practitioner.id"))
       .withColumnRenamed("_1", "practionerRole")
       .withColumnRenamed("_2", "practitioner")
-      .select($"practionerRole.id" as "role_id", $"practionerRole.organisation.id" as "role_org_id", $"practitioner.*")
+      .select($"practionerRole.id" as "role_id", $"practionerRole.organization.id" as "role_org_id", $"practitioner.*")
     practitionerWithRoles
 
   }
