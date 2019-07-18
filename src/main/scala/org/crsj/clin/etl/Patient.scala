@@ -28,7 +28,7 @@ object Patient {
         Some{
           data.map( row => {
             //TODO ¯\_(ツ)_/¯ row.toSeq fails, row(1) fails, row.getAs fails, but it prints alright
-
+            println(row.schema)
             val myDirtyHack = row.toString()
               .replaceAll("WrappedArray", "")
               .replaceAll("\\(", "")
