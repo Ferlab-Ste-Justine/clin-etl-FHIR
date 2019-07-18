@@ -19,9 +19,6 @@ object Practitioners {
         .withColumnRenamed("_1", "practitionerWithRoles")
         .withColumnRenamed("_2", "organization")
         .select($"practitionerWithRoles.*", $"organization.name" as "org_name")
-
-
     practitionerWithRolesAndOrg
-    //practitionerWithRoles
   }
 }
