@@ -9,7 +9,7 @@ object ClinicalImpression {
     val clinicalImpression = DataFrameUtils.load(s"$base/ci.ndjson", $"id", $"subject", $"status", $"effective", $"extension.valueAge.value" (0) as "runtimePatientAge", $"assessor.id" as "assessor_id")
 
     val clinicalImpressionWithAssessor = clinicalImpression
-      .select($"id", $"subject", $"status", $"effective", $"extension.valueAge.value" (0) as "runtimePatientAge", $"assessor_id")
+      .select($"id", $"subject", $"status", $"effective", $"runtimePatientAge", $"assessor_id")
       .join(practitionerWithRolesAndOrg
       .select($"role_id", $"name" as "assessor_name", $"org_name" as "assessor_org_name"), $"assessor_id" === $"role_id")
     clinicalImpressionWithAssessor
