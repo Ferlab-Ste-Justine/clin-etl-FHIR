@@ -21,7 +21,7 @@ object ClinicalImpression {
     val clinicalImpression = DataFrameUtils.load(s"$base/ci.ndjson", $"id", $"subject",
       $"status", $"effective", $"extension.valueAge.value" (0) as "runtimePatientAge", $"assessor.id" as "assessor_id",
       //items($"investigation") as "iiu")
-      $"investivation.item" as "iiu")
+      $"investigation.item" as "iiu")
 
     val clinicalImpressionWithAssessor = clinicalImpression
       .select($"id", $"subject", $"status", $"effective" as "ci_consultation_date", $"runtimePatientAge", $"assessor_id", $"iiu")
