@@ -11,7 +11,7 @@ object ClinicalImpression {
   private val items = udf((data: Seq[Row]) => {
     if (data == null) None
     else Some {
-      data.map { r => item(r.getAs("uri"))
+      data.map { r => item(r.getAs("item.uri"))
       }
     }
   })
@@ -20,7 +20,7 @@ object ClinicalImpression {
     import spark.implicits._
     val clinicalImpression = DataFrameUtils.load(s"$base/ci.ndjson", $"id", $"subject",
       $"status", $"effective", $"extension.valueAge.value" (0) as "runtimePatientAge", $"assessor.id" as "assessor_id",
-      items($"investigation.item") as "iiu")
+      items($"investigation") as "iiu")
 
     val clinicalImpressionWithAssessor = clinicalImpression
       .select($"id", $"subject", $"status", $"effective" as "ci_consultation_date", $"runtimePatientAge", $"assessor_id", $"iiu")
