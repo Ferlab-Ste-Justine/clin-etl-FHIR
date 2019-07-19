@@ -19,7 +19,7 @@ object Observation {
     import spark.implicits._
     DataFrameUtils.load(s"$base/obs.ndjson", $"id", $"status", $"code", $"subject", $"effective",
       phenotypes($"value.CodeableConcept.coding") as "phenotype", $"note",
-      expr("interpretation[0].coding[0].code") as "observed"
+      expr("interpretation[0].coding[0].code") as "observed", $"id" as "obs_id"
     )
 
 

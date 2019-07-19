@@ -16,9 +16,9 @@ object ETL {
     val specimens = Specimen.load(base)
     val practitionerWithRolesAndOrg = Practitioners.load(base, organizations)
     val clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg = ClinicalImpression.load(base, practitionerWithRolesAndOrg)
-    //val fullClinicalImpressionswithObservations =
-    //  joinAggregateList(clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, observations,
-    //    clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg("id") === $"subject.id", "observations")
+    val fullClinicalImpressionswithObservations =
+      joinAggregateList(clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, observations,
+        expr("array_contains(iiu.uri, obs_id)"), "observations")
     val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg)
     val studyWithPatients = Study.load(base)
     val familyMemberHistory = FamilyMemberHistory.load(base)
