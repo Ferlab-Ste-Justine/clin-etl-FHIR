@@ -20,14 +20,14 @@ object Observation {
     import spark.implicits._
     val observations = DataFrameUtils.load(s"$base/obs.ndjson", $"id", $"status", $"code", $"subject", $"effective",
       phenotypes($"value.CodeableConcept.coding") as "phenotype", $"note",
-      expr("interpretation[0].coding[0].code") as "observed", $"id" as "obs_id", expr("performer[0].id") as "performer"
+      expr("interpretation[0].coding[0].code") as "observed", $"id" as "obs_id", expr("performer[0].id") as "performer_id"
     )
 
     val observationsWithPerformer = observations
-      .select($"id", $"status", $"code", $"subject", $"effective", $"phenotype", $"note", $"observed", $"obs_id", $"performer")
+      .select($"id", $"status", $"code", $"subject", $"effective", $"phenotype", $"note", $"observed", $"obs_id", $"performer_id")
       .join(practitionerWithRolesAndOrg
-        .select($"role_id" as "performer_role_id", $"name" as "performer_name", $"org_name" as "performer_org_name"),
-        $"performer" === $"performer_role_id")
+      .select($"role_id", $"name" as "performer_name", $"org_name" as "performer_org_name"),
+        $"performer_id" === $"role_id")
     observationsWithPerformer
     //observations
 
