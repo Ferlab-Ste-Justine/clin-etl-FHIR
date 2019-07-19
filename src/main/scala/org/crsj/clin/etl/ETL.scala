@@ -16,18 +16,19 @@ object ETL {
     val specimens = Specimen.load(base)
     val practitionerWithRolesAndOrg = Practitioners.load(base, organizations)
     val clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg = ClinicalImpression.load(base, practitionerWithRolesAndOrg)
-    val fullClinicalImpressionswithObservations =
+    val fullClinicalImpressionsWithObservations =
       joinAggregateList(clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, observations,
         expr("array_contains(iiu.uri, obs_id)"), "observations")
     //val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg)
-    val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, fullClinicalImpressionswithObservations)
+    val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, fullClinicalImpressionsWithObservations)
     val studyWithPatients = Study.load(base)
     val familyMemberHistory = FamilyMemberHistory.load(base)
 
     val withObservations = joinAggregateList(patients, observations, patients("id") === $"subject.id", "observations")
     val withPractitioners = joinAggregateList(withObservations, practitionerWithRolesAndOrg, expr("array_contains(generalPractitioner.id, role_id)"), "practitioners")
     val withSpecimens = joinAggregateList(withPractitioners, specimens, withPractitioners("id") === $"subject.id", "specimens")
-    val withClinicalImpressions = joinAggregateList(withSpecimens, clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, withSpecimens("id") === $"subject.id", "clinicalImpressions")
+    //val withClinicalImpressions = joinAggregateList(withSpecimens, clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, withSpecimens("id") === $"subject.id", "clinicalImpressions")
+    val withClinicalImpressions = joinAggregateList(withSpecimens, fullClinicalImpressionsWithObservations, withSpecimens("id") === $"subject.id", "clinicalImpressions")
     val withOrganizations = joinAggregateFirst(withClinicalImpressions, organizations, withClinicalImpressions("managingOrganization.id") === organizations("id"), "organization")
     val withServiceRequest = joinAggregateList(withOrganizations, serviceRequest, withOrganizations("id") === $"subject.id", "serviceRequests")
     val withStudy = joinAggregateList(withServiceRequest, studyWithPatients, withServiceRequest("id") === $"patient.entity.id", "studies")
