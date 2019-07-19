@@ -1,5 +1,6 @@
 package org.crsj.clin.etl
 
+import org.apache.spark.sql
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions.{expr, udf}
 
@@ -15,13 +16,18 @@ object Observation {
     }
   })
 
-  def load(base: String)(implicit spark: SparkSession): DataFrame = {
+  def load(base: String, practitionerWithRolesAndOrg: sql.DataFrame)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._
-    DataFrameUtils.load(s"$base/obs.ndjson", $"id", $"status", $"code", $"subject", $"effective",
+    val observations = DataFrameUtils.load(s"$base/obs.ndjson", $"id", $"status", $"code", $"subject", $"effective",
       phenotypes($"value.CodeableConcept.coding") as "phenotype", $"note",
-      expr("interpretation[0].coding[0].code") as "observed", $"id" as "obs_id"
+      expr("interpretation[0].coding[0].code") as "observed", $"id" as "obs_id", $"performer"
     )
 
+    val observationsWithPerformer = observations
+      .select($"id", $"status", $"code", $"subject", $"effective", $"phenotype", $"note", $"observed", $"obs_id", $"performer")
+      .join(practitionerWithRolesAndOrg
+        .select($"role_id", $"name" as "performer_name", $"org_name" as "performer_org_name"), $"performer" === $"role_id")
+    observationsWithPerformer
 
   }
 
