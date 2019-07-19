@@ -26,8 +26,8 @@ object Observation {
     val observationsWithPerformer = observations
       .select($"id", $"status", $"code", $"subject", $"effective", $"phenotype", $"note", $"observed", $"obs_id", $"performer_id")
       .join(practitionerWithRolesAndOrg
-      .select($"role_id", $"name" as "performer_name", $"org_name" as "performer_org_name"),
-        $"performer_id" === $"role_id")
+      .select($"id" as "perf_id", $"name" as "performer_name", $"org_name" as "performer_org_name"),
+        $"performer_id" === $"perf_id")
     observationsWithPerformer
     //observations
 
