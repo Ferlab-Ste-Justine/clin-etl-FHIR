@@ -23,12 +23,13 @@ object Observation {
       expr("interpretation[0].coding[0].code") as "observed", $"id" as "obs_id", expr("performer[0].id") as "performer"
     )
 
-//    val observationsWithPerformer = observations
-//      .select($"id", $"status", $"code", $"subject", $"effective", $"phenotype", $"note", $"observed", $"obs_id", $"performer")
-//      .join(practitionerWithRolesAndOrg
-//        .select($"role_id" as "performer_role_id", $"name" as "performer_name", $"org_name" as "performer_org_name"), $"performer" === $"performer_role_id")
-    //observationsWithPerformer
-    observations
+    val observationsWithPerformer = observations
+      .select($"id", $"status", $"code", $"subject", $"effective", $"phenotype", $"note", $"observed", $"obs_id", $"performer")
+      .join(practitionerWithRolesAndOrg
+        .select($"role_id" as "performer_role_id", $"name" as "performer_name", $"org_name" as "performer_org_name"),
+        $"performer" === $"performer_role_id")
+    observationsWithPerformer
+    //observations
 
   }
 
