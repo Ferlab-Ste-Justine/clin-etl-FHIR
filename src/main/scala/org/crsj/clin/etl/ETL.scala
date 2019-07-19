@@ -14,16 +14,16 @@ object ETL {
     val patients = Patient.load(base)
     val specimens = Specimen.load(base)
     val practitionerWithRolesAndOrg = Practitioners.load(base, organizations)
-    val observationsWithPerformer = Observation.load(base, practitionerWithRolesAndOrg)
+    val observations = Observation.load(base, practitionerWithRolesAndOrg)
     val clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg = ClinicalImpression.load(base, practitionerWithRolesAndOrg)
     val fullClinicalImpressionsWithObservations =
-      joinAggregateList(clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, observationsWithPerformer,
+      joinAggregateList(clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, observations,
         expr("array_contains(iiu.uri, obs_id)"), "observations")
     val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, fullClinicalImpressionsWithObservations)
     val studyWithPatients = Study.load(base)
     val familyMemberHistory = FamilyMemberHistory.load(base)
 
-    val withObservations = joinAggregateList(patients, observationsWithPerformer, patients("id") === $"subject.id", "observations")
+    val withObservations = joinAggregateList(patients, observations, patients("id") === $"subject.id", "observations")
     val withPractitioners = joinAggregateList(withObservations, practitionerWithRolesAndOrg, expr("array_contains(generalPractitioner.id, role_id)"), "practitioners")
     val withSpecimens = joinAggregateList(withPractitioners, specimens, withPractitioners("id") === $"subject.id", "specimens")
     val withClinicalImpressions = joinAggregateList(withSpecimens, fullClinicalImpressionsWithObservations, withSpecimens("id") === $"subject.id", "clinicalImpressions")
