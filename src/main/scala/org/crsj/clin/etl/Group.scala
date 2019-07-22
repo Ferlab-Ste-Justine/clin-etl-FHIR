@@ -12,7 +12,7 @@ object Group {
 
 
     val groupWithStudy = study.select($"study_id", $"title", $"enrollment")
-      .join(group.select($"group_id", $"member"), $"enrollment.id" === $"group_id")
+      .join(group.select($"group_id", $"patient"), $"enrollment.id" === $"group_id")
       .select($"study_id", $"title", $"patient")
 
     groupWithStudy
