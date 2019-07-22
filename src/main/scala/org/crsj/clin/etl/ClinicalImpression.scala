@@ -20,7 +20,6 @@ object ClinicalImpression {
     import spark.implicits._
     val clinicalImpression = DataFrameUtils.load(s"$base/ci.ndjson", $"id", $"subject",
       $"status", $"effective", $"extension.valueAge.value" (0) as "runtimePatientAge", $"assessor.id" as "assessor_id",
-      //items($"investigation") as "iiu")
       $"investigation.item" (0) as "iiu")
 
     val clinicalImpressionWithAssessor = clinicalImpression
