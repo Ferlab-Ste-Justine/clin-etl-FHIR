@@ -25,6 +25,7 @@ object ETL {
         expr("array_contains(iiu.uri, fmh_id)"), "familyMemberHistory")
     val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, fullClinicalImpressionsWithObservationsAndFMH)
     val studyWithPatients = Study.load(base)
+    val group = Group.load(base)
 
     //val withObservations = joinAggregateList(patients, observationsWithPerformer, patients("id") === $"subject.id", "observations")
     val withPractitioners = joinAggregateList(patients, practitionerWithRolesAndOrg, expr("array_contains(generalPractitioner.id, role_id)"), "practitioners")
@@ -33,9 +34,10 @@ object ETL {
     val withOrganizations = joinAggregateFirst(withClinicalImpressions, organizations, withClinicalImpressions("managingOrganization.id") === organizations("id"), "organization")
     val withServiceRequest = joinAggregateList(withOrganizations, serviceRequest, withOrganizations("id") === $"subject.id", "serviceRequests")
     val withStudy = joinAggregateList(withServiceRequest, studyWithPatients, withServiceRequest("id") === $"patient.entity.id", "studies")
+    val withGroup = joinAggregateList(withStudy, group, withStudy("id") === $"patient.entity.id", "group")
     //val withFamilyMemberHistory = joinAggregateList(withStudy, familyMemberHistory, withStudy("id") === $"patient.id", "familyMemberHistory")
 
-    withStudy.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
+    withGroup.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
     //withFamilyMemberHistory.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
 
   }
