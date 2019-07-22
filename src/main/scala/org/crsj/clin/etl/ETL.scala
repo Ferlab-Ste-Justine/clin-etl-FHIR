@@ -37,7 +37,7 @@ object ETL {
     val withGroup = joinAggregateList(withStudy, groups, withStudy("id") === $"patient.entity.id", "group")
     //val withFamilyMemberHistory = joinAggregateList(withStudy, familyMemberHistory, withStudy("id") === $"patient.id", "familyMemberHistory")
     val group = DataFrameUtils.load(s"$base/group.ndjson", $"id" as "group_id", $"member" as "patient")
-    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", $"enrollment" (0))
+    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", $"enrollment.id")
 
     val studyWithGroup = joinAggregateList(study, group,
       expr("array_contains(enrollment.id, group_id)"), "group")
