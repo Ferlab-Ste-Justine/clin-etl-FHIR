@@ -9,7 +9,7 @@ object Group {
     import spark.implicits._
 
     val group = DataFrameUtils.load(s"$base/group.ndjson", $"id" as "group_id", $"member" as "patient")
-    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", $"enrollment")
+    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", explode($"enrollment") as "enrollment")
 
 
 //    val groupWithStudy = study.select($"study_id", $"title", $"enrollment")
