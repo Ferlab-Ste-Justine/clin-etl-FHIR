@@ -36,8 +36,8 @@ object ETL {
     val withStudy = joinAggregateList(withServiceRequest, studyWithPatients, withServiceRequest("id") === $"patient.entity.id", "studies")
     val withGroup = joinAggregateList(withStudy, groups, withStudy("id") === $"patient.entity.id", "group")
     //val withFamilyMemberHistory = joinAggregateList(withStudy, familyMemberHistory, withStudy("id") === $"patient.id", "familyMemberHistory")
-    val group = DataFrameUtils.load(s"$base/group.ndjson", $"id" as "group_id", explode($"member") as "patient")
-    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", explode($"enrollment") as "enrollment")
+    val group = DataFrameUtils.load(s"$base/group.ndjson", $"id" as "group_id", $"member" as "patient")
+    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", $"enrollment")
 
     withGroup.saveToEs("temp/temp", Map("es.mapping.id" -> "id"))
     groups.saveToEs("studies/groups", Map("es.mapping.id" -> "study_id"))
