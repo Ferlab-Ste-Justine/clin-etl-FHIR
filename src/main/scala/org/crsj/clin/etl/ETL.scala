@@ -11,6 +11,7 @@ object ETL {
   def run(base: String)(implicit spark: SparkSession): Unit = {
     import spark.implicits._
     val organizations = Organization.load(base)
+    val familyMemberHistory = FamilyMemberHistory.load(base)
     val patients = Patient.load(base)
     val specimens = Specimen.load(base)
     val practitionerWithRolesAndOrg = Practitioners.load(base, organizations)
@@ -19,9 +20,11 @@ object ETL {
     val fullClinicalImpressionsWithObservations =
       joinAggregateList(clinicalImpressionsWithAssessor_practitionerWithRoleAndOrg, observationsWithPerformer,
         expr("array_contains(iiu.uri, obs_id)"), "observations")
-    val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, fullClinicalImpressionsWithObservations)
+    val fullClinicalImpressionsWithObservationsAndFMH =
+      joinAggregateList(fullClinicalImpressionsWithObservations, familyMemberHistory,
+        expr("array_contains(iiu.uri, id)"), "familyMemberHistory")
+    val serviceRequest = ServiceRequest.load(base, practitionerWithRolesAndOrg, fullClinicalImpressionsWithObservationsAndFMH)
     val studyWithPatients = Study.load(base)
-    val familyMemberHistory = FamilyMemberHistory.load(base)
 
     //val withObservations = joinAggregateList(patients, observationsWithPerformer, patients("id") === $"subject.id", "observations")
     val withPractitioners = joinAggregateList(patients, practitionerWithRolesAndOrg, expr("array_contains(generalPractitioner.id, role_id)"), "practitioners")
@@ -30,9 +33,10 @@ object ETL {
     val withOrganizations = joinAggregateFirst(withClinicalImpressions, organizations, withClinicalImpressions("managingOrganization.id") === organizations("id"), "organization")
     val withServiceRequest = joinAggregateList(withOrganizations, serviceRequest, withOrganizations("id") === $"subject.id", "serviceRequests")
     val withStudy = joinAggregateList(withServiceRequest, studyWithPatients, withServiceRequest("id") === $"patient.entity.id", "studies")
-    val withFamilyMemberHistory = joinAggregateList(withStudy, familyMemberHistory, withStudy("id") === $"patient.id", "familyMemberHistory")
+    //val withFamilyMemberHistory = joinAggregateList(withStudy, familyMemberHistory, withStudy("id") === $"patient.id", "familyMemberHistory")
 
-    withFamilyMemberHistory.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
+    withStudy.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
+    //withFamilyMemberHistory.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
 
   }
 
