@@ -14,6 +14,7 @@ object Group {
 
     val explodedStudyWithExplodedGroup = explodedStudy.select( $"study_id", $"title", $"enrollment_id")
       .join(explodedGroup.select($"group_id", $"patient_id"), $"enrollment_id" === $"group_id")
+      .select($"study_id" as "id", $"title", $"patient_id" as "patient")
 
     explodedStudyWithExplodedGroup
   }
