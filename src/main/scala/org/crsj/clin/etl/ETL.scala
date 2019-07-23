@@ -43,7 +43,7 @@ object ETL {
     val studyWithGroup = joinAggregateList(study, group, expr("array_contains(enrollment_id, group_id)"), "group")
 
     val explodedStudyWithExplodedGroup = explodedStudy.select( $"study_id", $"title", $"enrollment_id")
-      .join(explodedGroup.select($"group_id", $"patient_id"), $"enrollment.id" === $"group_id")
+      .join(explodedGroup.select($"group_id", $"patient_id"), $"enrollment_id" === $"group_id")
 
 
     withGroup.saveToEs("temp/temp", Map("es.mapping.id" -> "id"))
