@@ -29,7 +29,6 @@ object Observation {
       .select($"id" as "perf_id", $"name" as "performer_name", $"org_name" as "performer_org_name"),
         $"performer_id" === $"perf_id")
     observationsWithPerformer
-    //observations
 
   }
 

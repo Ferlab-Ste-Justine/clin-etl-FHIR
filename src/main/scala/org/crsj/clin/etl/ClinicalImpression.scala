@@ -1,20 +1,9 @@
 package org.crsj.clin.etl
 
 import org.apache.spark.sql
-import org.apache.spark.sql.functions.udf
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object ClinicalImpression {
-
-  case class item(code: String)
-
-  private val items = udf((data: Seq[Row]) => {
-    if (data == null) None
-    else Some {
-      data.map { r => item(r.getAs("item.uri"))
-      }
-    }
-  })
 
   def load(base: String, practitionerWithRolesAndOrg: sql.DataFrame)(implicit spark: SparkSession): DataFrame = {
     import spark.implicits._

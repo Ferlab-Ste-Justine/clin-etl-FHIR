@@ -27,6 +27,5 @@ object ServiceRequest {
 
 
     serviceRequestWithClinicalImpressionAndRequester
-//    serviceRequestWithClinicalImpression
   }
 }
