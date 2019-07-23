@@ -30,7 +30,7 @@ object ETL {
     val withClinicalImpressions = joinAggregateList(withSpecimens, fullClinicalImpressionsWithObservationsAndFMH, withSpecimens("id") === $"subject.id", "clinicalImpressions")
     val withOrganizations = joinAggregateFirst(withClinicalImpressions, organizations, withClinicalImpressions("managingOrganization.id") === organizations("id"), "organization")
     val withServiceRequest = joinAggregateList(withOrganizations, serviceRequest, withOrganizations("id") === $"subject.id", "serviceRequests")
-    val withStudyAndGroup = joinAggregateList(withServiceRequest, studyWithGroup, withServiceRequest("id") === $"patient_id", "studies")
+    val withStudyAndGroup = joinAggregateList(withServiceRequest, studyWithGroup, withServiceRequest("id") === $"patient", "studies")
 
     withStudyAndGroup.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
 
