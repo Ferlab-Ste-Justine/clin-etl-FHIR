@@ -47,7 +47,7 @@ object ETL {
     group.saveToEs("group/group", Map("es.mapping.id" -> "group_id"))
     study.saveToEs("study/study", Map("es.mapping.id" -> "study_id"))
     explodedStudy.saveToEs("exstudy/exstudy", Map("es.mapping.id" -> "study_id"))
-    explodedGroup.saveToEs("exgroup/exgroup", Map("es.mapping.id" -> "group_id"))
+    explodedGroup.saveToEs("exgroup/exgroup") //, Map("es.mapping.id" -> "group_id"))
     studyWithGroup.saveToEs("groupss/groupss", Map("es.mapping.id" -> "study_id"))
 
     //withFamilyMemberHistory.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
