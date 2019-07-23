@@ -42,6 +42,10 @@ object ETL {
     val explodedStudy = study.select($"id", $"id" as "study_id", $"title", explode($"enrollment_id") as "enrollment_id")
     val studyWithGroup = joinAggregateList(study, group, expr("array_contains(enrollment_id, group_id)"), "group")
 
+    val explodedStudyWithExplodedGroup = explodedStudy.select( $"study_id", $"title", $"enrollment_id")
+      .join(explodedGroup.select($"group_id", $"patient_id"), $"enrollment.id" === $"group_id")
+
+
     withGroup.saveToEs("temp/temp", Map("es.mapping.id" -> "id"))
     groups.saveToEs("studies/groups", Map("es.mapping.id" -> "study_id"))
     group.saveToEs("group/group", Map("es.mapping.id" -> "group_id"))
@@ -49,6 +53,7 @@ object ETL {
     explodedStudy.saveToEs("exstudy/exstudy", Map("es.mapping.id" -> "study_id"))
     explodedGroup.saveToEs("exgroup/exgroup") //, Map("es.mapping.id" -> "group_id"))
     studyWithGroup.saveToEs("groupss/groupss", Map("es.mapping.id" -> "study_id"))
+    explodedStudyWithExplodedGroup.saveToEs("exstudygroup/exstudygroup")
 
     //withFamilyMemberHistory.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
 
