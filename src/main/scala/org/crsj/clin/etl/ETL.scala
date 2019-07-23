@@ -37,16 +37,16 @@ object ETL {
     val withGroup = joinAggregateList(withStudy, groups, withStudy("id") === $"patient.entity.id", "group")
     //val withFamilyMemberHistory = joinAggregateList(withStudy, familyMemberHistory, withStudy("id") === $"patient.id", "familyMemberHistory")
     val group = DataFrameUtils.load(s"$base/group.ndjson", $"id" as "group_id", $"member" as "patient")
-    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", $"enrollment.id" as "enrollment_id")
+    val study = DataFrameUtils.load(s"$base/study.ndjson", $"id" as "study_id", $"title", expr("enrollment.id") as "enrollment_id")
 
-    val studyWithGroup = joinAggregateList(study, group,
-      expr("array_contains(enrollment_id, group_id)"), "group")
+//    val studyWithGroup = joinAggregateList(study, group,
+//      expr("array_contains(enrollment_id, group_id)"), "group")
 
     withGroup.saveToEs("temp/temp", Map("es.mapping.id" -> "id"))
     groups.saveToEs("studies/groups", Map("es.mapping.id" -> "study_id"))
     group.saveToEs("group/group", Map("es.mapping.id" -> "group_id"))
     study.saveToEs("study/study", Map("es.mapping.id" -> "study_id"))
-    studyWithGroup.saveToEs("groupss/groupss", Map("es.mapping.id" -> "group_id"))
+//    studyWithGroupGroup.saveToEs("groupss/groupss", Map("es.mapping.id" -> "group_id"))
 
     //withFamilyMemberHistory.saveToEs("patient/patient", Map("es.mapping.id" -> "id"))
 
