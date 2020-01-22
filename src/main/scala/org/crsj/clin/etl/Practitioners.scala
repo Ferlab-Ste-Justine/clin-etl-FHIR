@@ -18,7 +18,7 @@ object Practitioners {
     val practitionerWithRolesAndOrg = practitionerWithRoles.joinWith(organization, organization("id") === practitionerWithRoles("role_org_id"))
         .withColumnRenamed("_1", "practitionerWithRoles")
         .withColumnRenamed("_2", "organization")
-        .select($"practitionerWithRoles.*", $"practitionerWithRoles.id" as "pract_id" ,$"organization.name" as "org_name", $"organization.alias" as "org_alias", $"organization.id" as "org_id")
+        .select($"practitionerWithRoles.*" ,$"organization.name" as "org_name", $"organization.alias" as "org_alias", $"organization.id" as "org_id")
     practitionerWithRolesAndOrg
   }
 }
