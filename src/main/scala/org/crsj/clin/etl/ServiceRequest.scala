@@ -24,7 +24,7 @@ object ServiceRequest {
       .select($"id", $"status", $"intent", $"authoredOn", $"code", $"subject", $"specimen", $"ci_ref", $"requester_role_id",$"ci_status")
       .join(practitionerWithRolesAndOrg
       .select($"role_id", $"name" as "requester_name", $"org_name" as "requester_org_name",
-        $"org_alias" as "requester_org_alias",  $"org_id" as "requester_org_id", $"practitionerWithRoles.id" as "pract_id"),
+        $"org_alias" as "requester_org_alias",  $"org_id" as "requester_org_id", $"id"),
         $"requester_role_id" === $"role_id")
 
 
