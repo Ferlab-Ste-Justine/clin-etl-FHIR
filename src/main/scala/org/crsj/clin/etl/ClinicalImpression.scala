@@ -14,7 +14,7 @@ object ClinicalImpression {
     val clinicalImpressionWithAssessor = clinicalImpression
       .select($"id", $"subject", $"status", $"effective" as "ci_consultation_date", $"runtimePatientAge", $"assessor_id", $"iiu")
       .join(practitionerWithRolesAndOrg
-      .select($"role_id", $"name" as "assessor_name", $"org_name" as "assessor_org_name"), $"assessor_id" === $"role_id")
+      .select($"role_id", $"name" as "assessor_name", $"org_name" as "assessor_org_name", $"org_id" as "assessor_org_id"), $"assessor_id" === $"role_id")
     clinicalImpressionWithAssessor
   }
 }
