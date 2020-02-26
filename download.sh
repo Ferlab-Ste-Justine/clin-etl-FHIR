@@ -3,8 +3,8 @@ set -xe
 
 mkdir -p ndjson
 
-fhir_server="http://localhost:8888"
-fhir_credential="fhir_import:01b99f28-1331-4fec-903b-c2e8043cec77"
+fhir_server="${FHIR_SERVER:-http://localhost:8888}"
+fhir_credential="${FHIR_CREDENTIAL:-fhir_import:01b99f28-1331-4fec-903b-c2e8043cec77}"
 
 curl -u $fhir_credential $fhir_server/Group/\$dump > ndjson/group.ndjson
 curl -u $fhir_credential $fhir_server/Patient/\$dump > ndjson/pt.ndjson
