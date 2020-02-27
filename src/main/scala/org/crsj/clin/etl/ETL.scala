@@ -27,7 +27,7 @@ object ETL {
     val studyWithGroup = Group.load(base)
     val withPractitioners = joinAggregateList(patients, practitionerWithRolesAndOrg, expr("array_contains(generalPractitioner.id, role_id)"), "practitioners")
     val withSamples = joinAggregateList(withPractitioners, samples, withPractitioners("id") === $"subject.id", "samples")
-    val withSpecimens = joinAggregateList(withSamples, specimens, withPractitioners("id") === $"subject.id", "specimens")
+    val withSpecimens = joinAggregateList(withSamples, specimens, withSamples("id") === $"subject.id", "specimens")
     val withClinicalImpressions = joinAggregateList(withSpecimens, fullClinicalImpressionsWithObservationsAndFMH, withSpecimens("id") === $"subject.id", "clinicalImpressions")
     val withOrganizations = joinAggregateFirst(withClinicalImpressions, organizations, withClinicalImpressions("managingOrganization.id") === organizations("id"), "organization")
     val withServiceRequest = joinAggregateList(withOrganizations, serviceRequest, withOrganizations("id") === $"subject.id", "serviceRequests")

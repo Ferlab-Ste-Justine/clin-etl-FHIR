@@ -4,7 +4,7 @@ import org.apache.spark.sql.functions.{col, expr, struct}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object Specimen {
-  def load(base: String)(implicit spark: SparkSession): DataFrame = {
+  def load(base: String)(implicit spark: SparkSession): (DataFrame, DataFrame) = {
     import spark.implicits._
     val rawSpecimen = DataFrameUtils.load(s"$base/sp.ndjson", $"id", $"subject", $"status", $"request.id" as "request", expr("container.identifier[0].value") as "container", $"type", expr("parent[0].id") as "parent")
     val sample = rawSpecimen.filter(col("parent").isNotNull).as("sample")
