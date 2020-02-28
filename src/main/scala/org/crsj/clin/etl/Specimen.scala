@@ -15,13 +15,20 @@ object Specimen {
           $"sample.parent" === $"specimen.id", 
           "left"
       ).select(
-          col("sample.id"), 
-          col("sample.subject"), 
-          col("sample.status"), 
-          col("sample.request"), 
-          col("sample.container"), 
-          col("sample.type"),
-          struct(specimen("*")).as("parent")
+        $"sample.id",
+        $"sample.subject",
+        $"sample.status",
+        $"sample.request",
+        $"sample.container",
+        $"sample.type",
+        struct(
+            $"specimen.id", 
+            $"specimen.subject", 
+            $"specimen.status",
+            $"specimen.request",
+            $"specimen.container",
+            $"specimen.type",
+        ).as("parent")
       )
     (specimen, explodedSample)
   }
